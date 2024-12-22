@@ -1,0 +1,167 @@
+//-------------------COUNTER--------------------------//
+_start:
+    addi x1, x0  1
+    add  x2, x2, x1
+    sw x2, 0(x0)
+    jal x0, -8
+
+
+//---------------------MULTIPLY-----------------------//
+
+_start:
+    # Load the base address of the result into t0
+    li t0, 0x00  # Replace with actual memory address if needed
+
+    # Load the two numbers into registers
+    li t1, 6000           # First number (e.g., 6)
+    li t2, 7000           # Second number (e.g., 7)
+
+    # Initialize the result to 0
+    li t3, 0           # t3 = result, initially set to 0
+
+    # Repeated addition (t1 * t2)
+multiply_loop:
+    beq t2, zero, done  # If t2 == 0, exit the loop
+    add t3, t3, t1      # Add t1 to the result (t3)
+    addi t2, t2, -1     # Decrement t2 by 1
+    j multiply_loop     # Repeat the loop
+
+done:
+    # Store the result in memory
+    sw t3, 0(t0)        # Store the result at the address in t0
+
+    # End of program (infinite loop)
+end:
+    j end
+
+
+
+//----------------47th FIBONACCI--------------------//
+_start:
+    # Initialize registers
+    li x5, 0          # First Fibonacci number (0)
+    li x6, 1          # Second Fibonacci number (1)
+    li x8, 48         # Number of Fibonacci numbers to generate (including the first two)
+
+    # Store the first Fibonacci number
+    sw x5, 0(x0)      # Store 0 at address 0x0
+    sw x6, 0(x0)      # Store 1 at address 0x0
+
+    addi x8, x8, -2   # Decrement the counter by 2 as the first two numbers are already stored
+
+fib_loop:
+    beq x8, x0, end    # If the counter reaches zero, end the loop
+
+    # Calculate the next Fibonacci number
+    add x9, x5, x6     # x9 = x5 + x6
+
+    # Update registers
+    mv x5, x6          # Move x6 to x5
+    mv x6, x9          # Move x9 to x6
+
+    # Store the next Fibonacci number
+    sw x9, 0(x0)       # Store x9 at address 0x0
+    addi x8, x8, -1    # Decrement the counter
+    j fib_loop         # Repeat the loop
+
+end:
+    j end              # Infinite loop to end the program
+
+
+
+
+//----------------BRANCH VALIDATION--------------------//
+
+_start:
+    li x1, -8000
+    li x2, 0
+    bltu x1, x2, validate
+    li x3, 0x33
+    sw x3, 0(x0)
+    
+end:
+    j end
+
+validate:
+    li x3, 0xffff
+    sw x3, 0(x0)
+    j end
+
+
+//-------------------MAT_MUL-----------------//
+_start:
+    # Initialize Matrix A
+    li x1, 1        # A[1][1]
+    sw x1, 9(x0)
+    li x1, 2        # A[1][2]
+    sw x1, 10(x0)
+    li x1, 3        # A[1][3]
+    sw x1, 11(x0)
+    li x1, 4        # A[2][1]
+    sw x1, 12(x0)
+    li x1, 5        # A[2][2]
+    sw x1, 13(x0)
+    li x1, 6        # A[2][3]
+    sw x1, 14(x0)
+    li x1, 7        # A[3][1]
+    sw x1, 15(x0)
+    li x1, 8        # A[3][2]
+    sw x1, 16(x0)
+    li x1, 9        # A[3][3]
+    sw x1, 17(x0)
+
+    # Initialize Matrix B
+    li x1, 2        # B[1][1]
+    sw x1, 18(x0)
+    li x1, 2        # B[1][2]
+    sw x1, 19(x0)
+    li x1, 2        # B[1][3]
+    sw x1, 20(x0)
+    li x1, 2        # B[2][1]
+    sw x1, 21(x0)
+    li x1, 2        # B[2][2]
+    sw x1, 22(x0)
+    li x1, 2        # B[2][3]
+    sw x1, 23(x0)
+    li x1, 2        # B[3][1]
+    sw x1, 24(x0)
+    li x1, 2        # B[3][2]
+    sw x1, 25(x0)
+    li x1, 2        # B[3][3]
+    sw x1, 26(x0)
+    
+end:
+    j end
+
+
+
+//----------------LOOP-----------------//
+# int sum = 0;
+# for (int i = 0; i < 10; i++) {
+#     sum += 1;
+# }
+
+_start:
+    # Initialize registers
+    li t0, 0         # t0 = i (loop counter), initialize to 0
+    li t1, 0xfffffff0         # t1 = loop upper bound
+    li t2, 0         # t2 = sum, initialize to 0
+
+loop:
+    # Check if i >= 10
+    bge t0, t1, store_result  # If t0 >= t1, exit loop
+
+    # Body of the loop
+    addi t2, t2, 1   # sum += 1
+
+    # Increment i
+    addi t0, t0, 1   # i++
+
+    # Jump back to the start of the loop
+    j loop
+
+store_result:
+    sw t0, 0(x0)
+
+end:
+    j end
